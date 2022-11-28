@@ -14,8 +14,8 @@ function getAddress(publicKey) {
     var pkHashed = keccak256(pk);
     //console.log(pkHashed);
 
-    //the address is identified by last 20 byte
-    var ethAddress = pkHashed.slice(-20);
+    //the address is identified by last 20 byte (40 characters)
+    var ethAddress = pkHashed.slice(-40);
     
     //convert to string of hexadecimal characters for curiosity
     //console.log(toHex(ethAddress));
