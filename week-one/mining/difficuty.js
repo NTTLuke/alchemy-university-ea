@@ -10,45 +10,29 @@ function addTransaction(transaction) {
     mempool.push(transaction);
 }
 
-function mine() {
-
-    //get mempool length
-    let elementsNr = mempool.length;
-    let solved = false;
-    let nounceCounter = -1;
-    let block = { id: blocks.length, transactions: transactions, nonce: nounceCounter };
-
-    for (let i = 0; i < elementsNr; i++) {
-        //load transaction and remove mempool
-        transactions.push(mempool.pop());
-
-        //add blocks only if MAX_TRANSACTIONS reached or mempool is empty
-        if (transactions.length == MAX_TRANSACTIONS || transactions.length == elementsNr) {
-            //solve the target difficulty of the block
-            while (!solved)
-            {   
-                //starting with zero 
-                block.nonce = nounceCounter++;
-                const blockHashed = SHA256(JSON.stringify(block));
-                
-                //checking if difficulty has been reached
-                if(BigInt(`0x${blockHashed}`) < TARGET_DIFFICULTY)
-                {
-                    block.hash = blockHashed;
-                    solved = true;
-                }            
-            }
-
-            //mine 
-            blocks.push(block);
-
-            //reset (note sure if transaction reset is the right way..thinking)
-            transactions = [];
-            elementsNr = mempool.length;
+function mine() {  
+    let transactions=[];
+    while(transactions.length<MAX_TRANSACTIONS && mempool.length>0){
+        transactions.push(mempool.pop());    
+    }
+    
+    var block = {id : blocks.length, transactions : transactions, nonce:0};
+    let blockHashed = SHA256(JSON.stringify(block));
+    while(true)
+    {
+    if(BigInt(`0x${blockHashed}`)<TARGET_DIFFICULTY)
+        {
+         break
+        }
+    else
+        {
+        block.nonce=block.nonce+1
+        blockHashed = SHA256(JSON.stringify(block));
         }
     }
-
+    blocks.push({hash : blockHashed, transactions : transactions,nonce : block.nonce});
 }
+
 
 module.exports = {
     TARGET_DIFFICULTY,
