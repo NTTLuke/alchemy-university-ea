@@ -11,29 +11,15 @@ function addTransaction(transaction) {
 }
 
 function mine() {
-
-     //get mempool length
-    let elementsNr = mempool.length;
-
-    for (let i = 0; i < elementsNr; i++){
-        //load transaction and remove mempool
+    let transactions=[];
+    // add transaction until maximum num arrived and mempool is not empty
+    while(transactions.length<MAX_TRANSACTIONS && mempool.length>0){
         transactions.push(mempool.pop());    
-
-        //add blocks only if MAX_TRANSACTIONS reached or mempool is empty
-        if(transactions.length == MAX_TRANSACTIONS || transactions.length == elementsNr)
-        {
-            //hash block 
-            var block = JSON.stringify({id : blocks.length});
-            let blockHashed = SHA256(block);
-
-            //mine 
-            blocks.push({hash : blockHashed, transactions : transactions});
-            
-            //reset 
-            transactions = [];
-            elementsNr = mempool.length;
-        }
     }
+    // hash block
+    var block = JSON.stringify({id : blocks.length});
+    let blockHashed = SHA256(block);
+    blocks.push({hash : blockHashed, transactions : transactions});
 
 }
 
